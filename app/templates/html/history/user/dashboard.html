@@ -1,0 +1,21 @@
+{% extends "html/index.html" %}
+{% block title %}
+User History
+{% endblock %}
+
+{% block css %}
+<link href="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.css" rel="stylesheet"/>
+{% endblock %}
+
+{% block content %}
+<h1 class="page-title">View user history</h1>
+
+<div id="user-history-board">
+    {% include "html/history/user/table.html" %}
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.js"></script>
+<script type="text/javascript" src="{{ url_for('userhistoryjs') }}"></script>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "html/index.html" %}
+
+{% block title %}
+Parking Bottle
+{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Park a Bottle</h1>
+<div class="col-sm-6 col-xs-6 col-md-6 col-lg-6">
+    {% include "html/parking/park-form.html" %}
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('parkingactionjs') }}" type="text/javascript"></script>
+{% endblock %}

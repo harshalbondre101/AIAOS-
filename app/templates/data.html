@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Dashboard</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            flex-wrap: nowrap;
+            width: 100%;
+            margin: 0 auto;
+            gap: 20px;
+        }
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            width: calc(100% - 270px); /* Adjusted for sidebar width */
+        }
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+        .card {
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            flex: 1;
+            min-width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .card-header {
+            background-color: #343a40;
+            color: #ffffff;
+            padding: 10px;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 1.25rem;
+            text-align: center;
+        }
+        h1, h2, h3 {
+            color: #343a40;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        th {
+            background-color: #343a40;
+            color: #ffffff;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .btn-back {
+            margin-bottom: 20px;
+        }
+        .below-threshold {
+            margin-top: 20px;
+        }
+        .unavailable td {
+            text-decoration: line-through;
+            color: #d9534f;
+        }
+        .sidebar {
+            width: 250px;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <button class="btn btn-primary btn-back" onclick="window.location.href='/'">Back to Dashboard</button>
+        
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="card">
+                <div class="card-header">
+                    Actions
+                </div>
+                <button class="btn btn-secondary btn-block" onclick="showForm('set-min-count')">Set Min Count</button>
+                <button class="btn btn-secondary btn-block" onclick="showForm('manage-menu')">Manage Menu</button>
+                <button class="btn btn-secondary btn-block" onclick="showForm('manage-inventory')">Manage Inventory</button>
+                <button class="btn btn-secondary btn-block" onclick="showForm('low-item-count')">Low Item Count</button>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="row">
+                <div class="card">
+                    <div class="card-header">
+                        Ingredient
+                    </div>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Ingredient</th>
+                                <th>Count</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventory-table-body">
+                            <!-- Inventory items will be loaded here dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        Menu
+                    </div>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody id="menu-table-body">
+                            <!-- Menu items will be loaded here dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="card" style="flex: 1 0 100%;">
+                    <div class="card-header">
+                        Missing
+                    </div>
+                    <div id="missing-ingredients-list">
+                        <!-- Missing ingredients will be listed here dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Forms -->
+    <div id="forms-container" style="display:none;">
+        <div id="set-min-count" class="form-section">
+            <h3>Set Minimum Count</h3>
+            <form id="min-count-form">
+                <div class="form-group">
+                    <label for="min_count">Minimum Count:</label>
+                    <input type="number" class="form-control" id="min_count" name="min_count" value="5" min="1" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Set</button>
+            </form>
+        </div>
+        <div id="manage-menu" class="form-section">
+            <h3>Manage Menu</h3>
+            <form id="menu-form" method="POST">
+                <div class="form-group">
+                    <label for="menu-item">Menu Item</label>
+                    <input type="text" class="form-control" id="menu-item" name="menu-item" required>
+                </div>
+                <div class="form-group">
+                    <label for="quantity">Quantity</label>
+                    <input type="number" class="form-control" id="quantity" name="quantity" required>
+                </div>
+                <button type="submit" class="btn btn-success btn-block">Add / Update Item</button>
+            </form>
+            <form id="delete-menu-form" method="POST">
+                <div class="form-group">
+                    <label for="delete_menu_item">Delete Menu Item</label>
+                    <input type="text" class="form-control" id="delete_menu_item" name="delete_menu_item" required>
+                </div>
+                <button type="submit" class="btn btn-danger btn-block">Delete Item</button>
+            </form>
+        </div>
+        <div id="manage-inventory" class="form-section">
+            <h3>Manage Inventory</h3>
+            <form id="inventory-form" method="POST">
+                <div class="form-group">
+                    <label for="ingredient">Ingredient</label>
+                    <input type="text" class="form-control" id="ingredient" name="ingredient" required>
+                </div>
+                <div class="form-group">
+                    <label for="count">Count</label>
+                    <input type="number" class="form-control" id="count" name="count" required>
+                </div>
+                <button type="submit" class="btn btn-success btn-block">Add / Update Item</button>
+            </form>
+            <form id="delete-form" method="POST">
+                <div class="form-group">
+                    <label for="delete_item_name">Delete Ingredient</label>
+                    <input type="text" class="form-control" id="delete_item_name" name="delete_item_name" required>
+                </div>
+                <button type="submit" class="btn btn-danger btn-block">Delete Item</button>
+            </form>
+        </div>
+        <div id="low-item-count" class="form-section">
+            <h3>Low Item Count</h3>
+            <ul id="below-threshold-list">
+                <!-- Items below threshold will be listed here -->
+            </ul>
+        </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        function showForm(formId) {
+            $('#forms-container').show();
+            $('.form-section').hide();
+            $('#' + formId).show();
+        }
+
+        $(document).ready(function() {
+            // Load inventory data
+            function loadInventory() {
+                $.ajax({
+                    url: '/get_inventory',
+                    type: 'GET',
+                    success: function(data) {
+                        const tableBody = $('#inventory-table-body');
+                        tableBody.empty();
+                        data.forEach(function(item) {
+                            tableBody.append(`
+                                <tr>
+                                    <td>${item.ingredient}</td>
+                                    <td>${item.count}</td>
+                                </tr>
+                            `);
+                        });
+                    }
+                });
+            }
+            loadInventory();
+
+            // Load menu data
+            function loadMenu() {
+                $.ajax({
+                    url: '/get_menu',
+                    type: 'GET',
+                    success: function(data) {
+                        const tableBody = $('#menu-table-body');
+                        tableBody.empty();
+                        data.forEach(function(item) {
+                            tableBody.append(`
+                                <tr class="${item.unavailable ? 'unavailable' : ''}">
+                                    <td>${item.item_name}</td>
+                                    <td>${item.quantity}</td>
+                                </tr>
+                            `);
+                        });
+                    }
+                });
+            }
+            loadMenu();
+
+            // Load missing ingredients
+            function loadMissingIngredients() {
+                $.ajax({
+                    url: '/get_missing_ingredients',
+                    type: 'GET',
+                    success: function(data) {
+                        const list = $('#missing-ingredients-list');
+                        list.empty();
+                        data.forEach(function(item) {
+                            list.append(`
+                                <div>${item}</div>
+                            `);
+                        });
+                    }
+                });
+            }
+            loadMissingIngredients();
+
+            // Load items below threshold
+            function loadBelowThresholdItems() {
+                $.ajax({
+                    url: '/get_items_below_threshold',
+                    type: 'GET',
+                    success: function(data) {
+                        const list = $('#below-threshold-list');
+                        list.empty();
+                        data.forEach(function(item) {
+                            list.append(`
+                                <li>${item}</li>
+                            `);
+                        });
+                    }
+                });
+            }
+            loadBelowThresholdItems();
+
+            // Form submissions
+            $('#min-count-form').submit(function(e) {
+                e.preventDefault();
+                const minCount = $('#min_count').val();
+                $.post('/set_min_count', { min_count: minCount }, function(response) {
+                    alert(response.message);
+                    loadInventory();
+                });
+            });
+
+            $('#menu-form').submit(function(e) {
+                e.preventDefault();
+                const menuItem = $('#menu-item').val();
+                const quantity = $('#quantity').val();
+                $.post('/update_menu', { item_name: menuItem, quantity: quantity }, function(response) {
+                    alert(response.message);
+                    loadMenu();
+                });
+            });
+
+            $('#delete-menu-form').submit(function(e) {
+                e.preventDefault();
+                const menuItem = $('#delete_menu_item').val();
+                $.post('/delete_menu_item', { item_name: menuItem }, function(response) {
+                    alert(response.message);
+                    loadMenu();
+                });
+            });
+
+            $('#inventory-form').submit(function(e) {
+                e.preventDefault();
+                const ingredient = $('#ingredient').val();
+                const count = $('#count').val();
+                $.post('/update_inventory', { ingredient: ingredient, count: count }, function(response) {
+                    alert(response.message);
+                    loadInventory();
+                });
+            });
+
+            $('#delete-form').submit(function(e) {
+                e.preventDefault();
+                const ingredient = $('#delete_item_name').val();
+                $.post('/delete_inventory_item', { ingredient: ingredient }, function(response) {
+                    alert(response.message);
+                    loadInventory();
+                });
+            });
+        });
+    </script>
+</body>
+</html>

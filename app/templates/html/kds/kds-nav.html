@@ -1,0 +1,22 @@
+<ul class="nav nav-tabs">
+    <li class="nav-item active">
+        <a href="#" class="nav-link active" id="nav-dinein-tab" data-bs-toggle="tab" data-bs-target="#nav-dinein" type="button" role="tab" aria-controls="nav-dinein" aria-selected="false">
+            Dine-in
+            {% if total_dinein_orders > 0 %}
+            <span id="nav-dinein-tab-notification" class="badge bg-danger rounded-pill border border-light">{{ total_dinein_orders }}</span>
+            {% else %}
+            <span id="nav-dinein-tab-notification" class="badge bg-danger rounded-pill border border-light"></span>
+            {% endif %}
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="#" class="nav-link" id="nav-takeaway-tab" data-bs-toggle="tab" data-bs-target="#nav-takeaway" type="button" role="tab" aria-controls="nav-takeaway" aria-selected="false">
+            Take away
+            {% if total_takeaway_orders > 0 %}
+            <span id="nav-takeaway-tab-notification" class="badge bg-danger rounded-pill border border-light">{{ total_takeaway_orders }}</span>
+            {% else %}
+            <span id="nav-takeaway-tab-notification" class="badge bg-danger rounded-pill border border-light"></span>
+            {% endif %}
+        </a>
+    </li>
+</ul>

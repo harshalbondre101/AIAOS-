@@ -1,0 +1,12 @@
+{% if table_orders|length > 0 %}
+<button id="table_id_{{ table_num }}" table-id="{{ table_num }}" data-bs-toggle="modal" data-bs-target="#tableModal" class="btn btn-table btn-success btn-block btn-lg">
+    <span id="table_id_{{ table_num }}_name" class="table-name">Table {{ table_num }}</span><br/>
+    <span id="table_id_{{ table_num }}_badge" value="{% for item in table_orders %}{{item}} {% endfor %}" class="badge btn-table-badge text-wrap rounded-pill bg-danger">
+    </span>
+</button>
+{% else %}
+<button id="table_id_{{ table_num }}" table-id="{{ table_num }}" data-bs-toggle="modal" data-bs-target="#tableModal" class="btn btn-table btn-secondary btn-block btn-lg">
+    <span id="table_id_{{ table_num }}_name" class="table-name">Table {{ table_num }}</span><br/>
+    <span id="table_id_{{ table_num }}_badge" value="" class="badge btn-table-badge text-wrap rounded-pill bg-danger"></span>
+</button>
+{% endif %}

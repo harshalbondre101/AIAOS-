@@ -1,0 +1,22 @@
+{% extends "html/index.html" %}
+
+{% block title %}
+The Dynamic AIAOs-KDS
+{% endblock %}
+
+{% block content %}
+{% include "html/kds/kds-nav.html" %}
+<audio src="https://res.cloudinary.com/dxfq3iotg/video/upload/v1557233524/success.mp3" id="notificationSound" type="audio/mpeg"></audio>
+<div class="tab-content" id="dynamic_content">
+{% include "html/kds/dinein/kds-dinein-tab.html" %}
+{% include "html/kds/takeaway/kds-takeaway-tab.html" %}
+</div>
+{% include "html/pagemap.html" %}
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('kdsactionjs') }}" type="text/javascript"></script>
+<script src="{{ url_for('static', filename='js/kds-socket.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('static', filename='js/pagemap-1.4.0.min.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('static', filename='js/load-pagemap.js') }}" type="text/javascript"></script>
+{% endblock %}

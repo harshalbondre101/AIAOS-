@@ -1,0 +1,55 @@
+<form class="form-responsive">
+    <div class="form-group">
+        <label for="filterStart" class="control-label">Start date</label>
+        <input id="filterStart" type="date" class="form-control" value="" required>
+    </div>
+    <div class="form-group">
+        <label for="filterEnd" class="control-label">End date</label>
+        <input id="filterEnd" type="date" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label for="filterType" class="control-label">
+            Order type
+        </label>
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" value="dine_in" id="dineInType">
+            <label for="dineInType" class="form-check-label">Dine in</label>
+        </div>
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" value="take_away" id="takeAwayType">
+            <label for="takeAwayType" class="form-check-label">Take away</label>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="filterTable" class="control-label">
+            Table
+        </label>
+        <select id="filterTable" data-placeholder="Choose a table" class="form-select" multiple>
+            {% for table in all_table %}
+                <option value="{{ table }}">
+                    Table {{ table }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="filterStatus" class="control-label">
+            Order status
+        </label>
+        <select id="filterStatus" data-placeholder="Choose order status" class="form-select" multiple>
+            <option value="0">In progress</option>
+            <option value="1">Finished</option>
+            <option value="2">Canceled</option>
+            <option value="3">Refunded</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <p class="text-danger" id="filterError"></p>
+        <div class="d-grid gap-2">
+            <button type="button" id="startFilter" class="btn btn-primary">
+                <span id="startFilterBtnSpinner" class="spinner-border spinner-border-sm visually-hidden" role="status" aria-hidden="true"></span>
+                <span id="startFilterBtnText">Filter</span>
+            </button>
+        </div>
+    </div>
+</form>

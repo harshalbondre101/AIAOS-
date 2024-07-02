@@ -1,0 +1,20 @@
+{% extends "html/index.html" %}
+
+{% block title %}
+Sales Statistics
+{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Sales Statistics</h1>
+{% include "html/stats/filter-form.html" %}
+<p class="text-danger" id="statFilterError"></p>
+<div class="row g-3">
+    <div id="weekStatsContent"></div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('weekstatactionjs') }}" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.3.0/chart.umd.js" integrity="sha512-CMF3tQtjOoOJoOKlsS7/2loJlkyctwzSoDK/S40iAB+MqWSaf50uObGQSk5Ny/gfRhRCjNLvoxuCvdnERU4WGg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+{% endblock %}
