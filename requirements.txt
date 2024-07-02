@@ -12,3 +12,4 @@ python-dotenv
 unique-names-generator
 flask_caching
 flask_cors
+requests
