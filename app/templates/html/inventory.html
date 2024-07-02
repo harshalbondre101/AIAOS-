@@ -17,7 +17,7 @@
             justify-content: space-between;
             align-items: flex-start;
             flex-wrap: wrap;
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
             gap: 20px;
         }
@@ -40,7 +40,7 @@
             border-top-left-radius: 8px;
             border-top-right-radius: 8px;
             margin-bottom: 10px;
-            font-size: 1.25rem;
+            font-size: 1rem;
             text-align: center;
         }
         h1, h2, h3 {
@@ -78,27 +78,27 @@
             color: #d9534f; /* Optional: Red color for unavailable items */
         }
         .sidebar {
-        position: absolute;
+        position: fixed; /* Changed to fixed position to keep it in view */
         top: 20px;
-        bottom: 0;
-        right: 0;
-        width: 350px;
+        right: 20px; /* Adjusted positioning */
+        width: 230px; /* Reduced width for sidebar */
         padding: 20px;
         background-color: #ffffff;
         box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+        overflow-y: auto;
+        height: 700px;
         }
+
         .sidebar2 {
-        position: absolute;
-        top: 20px;
-        bottom: 0;
-        left: 0;
-        height: 800px;
-        width: 350px;
-        padding: 20px;
-        background-color: #ffffff;
-        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-        
+            position: fixed; /* Changed to fixed position to keep it in view */
+            top: 20px;
+            left: 20px; /* Adjusted positioning */
+            width: 230px; /* Reduced width for sidebar */
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
         }
+
     #below-threshold-list {
         color: red;
         font-weight: bold;
@@ -106,7 +106,7 @@
     .btn-back {
     display: inline-block;
     padding: 10px 20px;
-    font-size: 16px;
+    font-size: 10px;
     font-weight: bold;
     text-align: center;
     text-decoration: none;
@@ -233,7 +233,7 @@
         <div >
             <a href="/" class="btn-back">Back to Dashboard</a>
             <div class="below-threshold">
-                <h3>Set Minimum Count</h3>
+                <h5>Set Minimum Count</h5>
                 <form id="min-count-form">
                     <div class="form-group">
                         <label for="min_count">Minimum Count:</label>
@@ -241,7 +241,7 @@
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">Set</button>
                 </form>
-                <h3 style="margin-top: 20px;">Low item count:</h3>
+                <h5 style="margin-top: 20px;">Low item count:</h5>
                 <ul id="below-threshold-list">
                     <!-- Items below threshold will be listed here -->
                 </ul>
