@@ -1,0 +1,50 @@
+version: "1.0"
+
+services:
+    # Remove this and update database name to the real uri
+    # when deploy to the world.
+    database:
+        container_name: AIAOs-KDS-Database
+        image: postgres:15-alpine
+        environment:
+            - POSTGRES_USER=${POSTGRES_USER}
+            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+            - POSTGRES_DB=${POSTGRES_DB}
+        ports:
+            - "6543:5432"
+        volumes:
+            - aiaos-kds-data:/var/lib/postgresql/data
+    
+    caching:
+        container_name: AIAOs-KDS-Cache
+        image: redis:7.0.11-alpine
+        command: redis-server --save 60 1 --loglevel warning
+        restart: unless-stopped
+        volumes:
+            - aiaos-kds-redis:/data
+
+    web:
+        container_name: AIAOs-KDS
+        image: trhgquan/aiaos-kds:latest
+        environment:
+            - DB_NAME=${DB_NAME}
+            - CACHE_TYPE=${CACHE_TYPE}
+            - CACHE_REDIS_URL=${CACHE_REDIS_URL}
+            - MAX_TABLE=${MAX_TABLE}
+            - MAX_TABLE_PER_ROW=${MAX_TABLE_PER_ROW}
+            - PINCODE=${PINCODE}
+            - TIMEZONE=${TIMEZONE}
+            - MAX_BESTSELLER_RECOMMEND=${MAX_BESTSELLER_RECOMMEND}
+        ports:
+            - "5000:5000"
+        restart: unless-stopped
+        depends_on:
+            - database
+            - caching
+        entrypoint: /aiaos-kds/entrypoint.sh
+
+volumes:
+    aiaos-kds-data:
+        driver: local
+    aiaos-kds-redis:
+        driver: local
