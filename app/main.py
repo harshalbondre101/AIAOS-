@@ -20,6 +20,7 @@ import json
 from app.inventory_action import *
 from flask_caching import Cache
 from app.telegram_bot import *
+import pandas as pd
 
 def create_app(test_config=None):
     print("called")
@@ -527,6 +528,38 @@ def create_app(test_config=None):
             return jsonify({'status': 'present'})
         else:
             return jsonify({'status': 'not_present'})
+        
+    # Load Excel files
+    file_paths = {
+        'Inventory': 'inventory.csv',
+        'Menu': 'menu.csv',
+        'Mappings': 'mappings2.excel'
+    }
+
+    @app.route('/load_data/<filename>', methods=['GET'])
+    def load_data(filename):
+        if filename in file_paths:
+            file_path = file_paths[filename]
+            if file_path.endswith('.csv'):
+                df = pd.read_csv(file_path)
+            else:
+                df = pd.read_excel(file_path)
+            data = df.to_dict(orient='records')
+            return jsonify(data)
+        return jsonify({'error': 'File not found'}), 404
+
+    @app.route('/save_data/<filename>', methods=['POST'])
+    def save_data(filename):
+        if filename in file_paths:
+            data = request.json
+            df = pd.DataFrame(data)
+            file_path = file_paths[filename]
+            if file_path.endswith('.csv'):
+                df.to_csv(file_path, index=False)
+            else:
+                df.to_excel(file_path, index=False)
+            return jsonify({'success': True})
+        return jsonify({'error': 'File not found'}), 404
 
 
 
