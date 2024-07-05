@@ -93,15 +93,18 @@
             position: fixed; /* Changed to fixed position to keep it in view */
             top: 20px;
             left: 20px; /* Adjusted positioning */
-            width: 230px; /* Reduced width for sidebar */
+            width: 200px; /* Reduced width for sidebar */
             padding: 20px;
             background-color: #ffffff;
             box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        height: 700px;
         }
 
     #below-threshold-list {
         color: red;
         font-weight: bold;
+        font-size: small;
     }
     .btn-back {
     display: inline-block;
@@ -129,6 +132,17 @@
         outline: none;
         box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
     }
+    .btn-danger {
+            background-color: #007bff; /* Change the background color to blue */
+            border-color: #007bff; /* Change the border color to blue */
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+            border-color: #0056b3; /* Darker border color on hover */
+            color: #fff; /* Keep text color white */
+        }
     </style>
 </head>
 <body>
@@ -232,8 +246,9 @@
     <div class="sidebar2">
         <div >
             <a href="/" class="btn-back">Back to Dashboard</a>
+            <a href="/check" class="btn-back">Edit Excel Sheets</a>
             <div class="below-threshold">
-                <h5>Set Minimum Count</h5>
+                <h6>Set Minimum Count for not available items</h6>
                 <form id="min-count-form">
                     <div class="form-group">
                         <label for="min_count">Minimum Count:</label>
@@ -329,6 +344,35 @@
 
         // Load items below threshold on page load
         loadBelowThreshold(5); // Default to 5 initially
+
+        function checkInventory() {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', '/send_alert_bot', true);
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        const data = JSON.parse(xhr.responseText);
+                        if (data.length > 0) {
+                            alert("Alert: Some items are below the threshold. Check your Telegram for details.");
+                        }
+                    } else {
+                        console.error('Error checking inventory:', xhr.statusText);
+                    }
+                }
+            };
+
+            xhr.send();
+        }
+
+        // Check inventory every 10 minutes (600,000 milliseconds)
+        setInterval(checkInventory, 600000);
+
+        // Initial check on page load
+        checkInventory();
+
+
+
 
         // Check for items below threshold every 30 seconds
         setInterval(function() {
