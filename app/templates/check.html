@@ -3,28 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Send Alert</title>
-    <script>
-        function sendAlert() {
-            fetch('/send_alert_bot')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        alert("Error: " + data.error);
-                    } else if (data.length === 0) {
-                        alert("All items are above the threshold.");
-                    } else {
-                        alert("Alert sent successfully!");
-                    }
-                })
-                .catch(error => {
-                    alert("Error: " + error);
-                });
-        }
-    </script>
+    <title>Excel & CSV Viewer and Editor</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <style>
+    .btn-back {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 10px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    background-color: #007bff;
+    color: #fff;
+    border: 2px solid #007bff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    }
+
+    .btn-back:hover {
+        background-color: #0056b3;
+        color: black;
+        border-color: #0056b3;
+        text-decoration: none;
+    }
+
+    .btn-back:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
+    }
+
+    </style>
+
 </head>
 <body>
-    <h1>Send Alert</h1>
-    <button onclick="sendAlert()">Send Alert</button>
+    <div class="container mt-5">
+        <a href="/" class="btn-back">Back to Dashboard</a>
+        <a href="/inventory" class="btn-back">Back to Inventory</a>
+        <button id="saveButton" class="btn btn-primary">Save</button>
+        <h1>Viewer and Editor</h1>
+        <div class="mb-3">
+            <select id="fileSelect" class="form-control">
+                <option value="Inventory">Inventory</option>
+                <option value="Menu">Menu</option>
+                <option value="Mappings">Mappings</option>
+            </select>
+        </div>
+        <table id="dataTable" class="table table-bordered">
+            <thead>
+                <tr>
+                    <!-- Table Headers will be dynamically populated -->
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Table Data will be dynamically populated -->
+            </tbody>
+        </table>
+        
+        <br><br><br>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#fileSelect').change(loadData);
+            $('#saveButton').click(saveData);
+
+            function loadData() {
+                let filename = $('#fileSelect').val();
+                $.get(`/load_data/${filename}`, function(data) {
+                    let table = $('#dataTable');
+                    table.find('thead tr').empty();
+                    table.find('tbody').empty();
+
+                    if (data.length > 0) {
+                        let headers = Object.keys(data[0]);
+                        headers.forEach(header => {
+                            table.find('thead tr').append(`<th>${header}</th>`);
+                        });
+
+                        data.forEach(row => {
+                            let rowHtml = '<tr>';
+                            headers.forEach(header => {
+                                rowHtml += `<td contenteditable="true">${row[header]}</td>`;
+                            });
+                            rowHtml += '</tr>';
+                            table.find('tbody').append(rowHtml);
+                        });
+                    }
+                });
+            }
+
+            function saveData() {
+                let filename = $('#fileSelect').val();
+                let data = [];
+                let headers = [];
+
+                $('#dataTable thead th').each(function() {
+                    headers.push($(this).text());
+                });
+
+                $('#dataTable tbody tr').each(function() {
+                    let row = {};
+                    $(this).find('td').each(function(index) {
+                        row[headers[index]] = $(this).text();
+                    });
+                    data.push(row);
+                });
+
+                $.ajax({
+                    url: `/save_data/${filename}`,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function(response) {
+                        alert('Data saved successfully');
+                    },
+                    error: function(error) {
+                        alert('Error saving data');
+                    }
+                });
+            }
+
+            loadData(); // Initial load
+        });
+    </script>
 </body>
 </html>
